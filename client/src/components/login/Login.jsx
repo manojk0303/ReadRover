@@ -1,97 +1,95 @@
 import React from 'react';
 import styled from 'styled-components';
-// import { StyledForm, StyledInput, StyledButton, StyledAlert, StyledLabel } from './FormComponents';
+import 'mdb-react-ui-kit/dist/css/mdb.min.css';
+import '@fortawesome/fontawesome-free/css/all.min.css';
+import { Link } from 'react-router-dom';
+import Icon from "../../images/logo.png";
 
-function Login() {
-    const [username, setUsername] = React.useState('');
-    const [password, setPassword] = React.useState('');
-    const [passwordInvalid, setPasswordInvalid] = React.useState(false);
-    const [enabled, setEnabled] = React.useState(false);
+import {
+  MDBInput,
+  MDBCol,
+  MDBRow,
+  MDBCheckbox,
+  MDBBtn,
+  MDBIcon
+} from 'mdb-react-ui-kit';
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
+const Container = styled.div`
+  height: 100vh; /* Set the height to 100% of the viewport height */                                        
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
 
-        // validate password and set passwordInvalid state accordingly
-        if (password.length < 8) {
-            setPasswordInvalid(true);
-        } else {
-            setPasswordInvalid(false);
-        }
-    }
+const LoginContainer = styled.div`
+  width: 300px; /* Adjust the width as needed */
+`;
+const Logo = styled.div`
+  text-align: center;
+  margin-bottom: 20px;
+`;
 
-    const usernameEntered = (e) => {
-        setUsername(e.target.value);
-        // buttonEnabled(username, password)
-    }
+const   LoginHeading = styled.h3`
+  text-align: center;
+  margin-bottom: 20px;
+`;
 
-    const passwordEntered = (e) => {
-        setPassword(e.target.value);
-        // buttonEnabled(username, password)
-    }
+export default function Login() {
+  return (
 
-    const buttonEnabled = (username, password) => {
-        if(username.length > 0 && password.length > 0) {
-            setEnabled(true);
-        } else {
-            setEnabled(false);
-        }
-    }
+    <Container>
+      <LoginContainer>
+      <Logo>
+          <img
+            src={Icon} 
+            alt="ReadRover Logo"
+            style={{ width: '40px', height: '40px', borderRadius: '50%' }}
+          />
+        </Logo>
+        < LoginHeading>Login</ LoginHeading>
+        <form>
+          <MDBInput className='mb-4' type='email' id='form2Example1' label='Email address' />
+          <MDBInput className='mb-4' type='password' id='form2Example2' label='Password' />
 
-    return (
-        <StyledForm onSubmit={handleSubmit}>
-            <StyledLabel>Username:</StyledLabel>
-            <StyledInput type="text" value={username} onChange={e => usernameEntered(e)}/>
-            <StyledLabel invalid={passwordInvalid}>Password:</StyledLabel>
-            <StyledInput type="password" value={password} onChange={(e) => passwordEntered(e)} />
-            {passwordInvalid && <StyledAlert>Password is invalid.</StyledAlert>}
-            <StyledButton type="submit" disabled={!username || !password}>Login</StyledButton>
-        </StyledForm>
-    )
+          <MDBRow className='mb-4'>
+            <MDBCol className='d-flex justify-content-center'>
+              <MDBCheckbox id='form2Example3' label='Remember me' defaultChecked />
+            </MDBCol>
+            <MDBCol>
+              <a href='#!'>Forgot password?</a>
+            </MDBCol>
+          </MDBRow>
+
+          <MDBBtn type='submit' className='mb-4' block>
+            Sign in
+          </MDBBtn>
+
+          <div className='text-center'>
+            <p>
+              Not a member?  <Link to="/register">register</Link>
+            </p>
+            <p>or sign up with:</p>
+
+            <MDBBtn floating color="secondary" className='mx-1'>
+              <MDBIcon fab icon='facebook-f' />
+            </MDBBtn>
+
+            <MDBBtn floating color="secondary" className='mx-1'>
+              <MDBIcon fab icon='google' />
+            </MDBBtn>
+
+            <MDBBtn floating color="secondary" className='mx-1'>
+              <MDBIcon fab icon='twitter' />
+            </MDBBtn>
+
+            <MDBBtn floating color="secondary" className='mx-1'>
+              <MDBIcon fab icon='github' />
+            </MDBBtn>
+          </div>
+        </form>
+      </LoginContainer>
+    </Container>
+
+    
+  );
 }
-
-const StyledForm = styled.form`
-  background-color: #f4f4f4;
-  padding: 20px;
-  border-radius: 5px;
-`
-
-const StyledLabel = styled.label`
-  display: block;
-  margin-bottom: 5px;
-  font-weight: bold;
-  color: ${props => props.invalid ? 'red' : 'black'};
-`
-
-const StyledInput = styled.input`
-  width: 100%;
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-`
-
-const StyledButton = styled.button`
-  background-color: #4caf50;
-  color: white;
-  padding: 10px;
-  margin-top: 10px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  &:disabled {
-    opacity: 0.5;
-  }
-  &:enabled {
-    opacity: 1.0;
-  }
-  opacity: ${props => !props.enabled ? 0.5 : 1};
-`
-
-const StyledAlert = styled.div`
-  padding: 10px;
-  background-color: #f44336;
-  color: white;
-  margin-top: 10px;
-  border-radius: 5px;
-`
-
-export default Login;

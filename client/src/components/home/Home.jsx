@@ -1,7 +1,10 @@
+import FileUpload from "../fileupload/FIleUpload";
+import Navbar from "../navbar/Navbar";
 const Home = () => {
     return (
         <div>
-            <h1>Home</h1>
+            <Navbar />
+            <FileUpload />
         </div>
     )
 }
