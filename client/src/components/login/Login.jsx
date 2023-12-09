@@ -1,9 +1,10 @@
-import React from 'react';
+import React,{useState} from 'react';
 import styled from 'styled-components';
 import 'mdb-react-ui-kit/dist/css/mdb.min.css';
 import '@fortawesome/fontawesome-free/css/all.min.css';
-import { Link } from 'react-router-dom';
+import { Link,useNavigate } from 'react-router-dom';
 import Icon from "../../images/logo.png";
+import axios from 'axios';
 
 import {
   MDBInput,
@@ -35,6 +36,30 @@ const   LoginHeading = styled.h3`
 `;
 
 export default function Login() {
+
+    let apiUrl = "http://localhost:5000/api";
+  const [email,setEmail] = useState("");
+  const [password,setPassword] = useState("")
+  const navigate = useNavigate(); 
+
+
+    const handleLogin = async (event) => {
+      event.preventDefault()
+        try {
+          const response = await axios.post(`${apiUrl}/login`, { email, password });
+          const token = response.data.token;
+          if (token) {
+            localStorage.setItem('jwt', token);
+            navigate('/');
+          } else {
+            alert('Wrong email or password');
+          }
+          
+        } catch (error) {
+          console.error('Error during login:', error);
+          alert('Wrong Email or password');
+        }
+      };
   return (
 
     <Container>
@@ -46,10 +71,10 @@ export default function Login() {
             style={{ width: '40px', height: '40px', borderRadius: '50%' }}
           />
         </Logo>
-        < LoginHeading>Login</ LoginHeading>
+        <LoginHeading>Login</LoginHeading>
         <form>
-          <MDBInput className='mb-4' type='email' id='form2Example1' label='Email address' />
-          <MDBInput className='mb-4' type='password' id='form2Example2' label='Password' />
+          <MDBInput className='mb-4' type='email' id='form2Example1' label='Email address' value={email} onChange={e=>setEmail(e.target.value)} />
+          <MDBInput className='mb-4' type='password' id='form2Example2' label='Password' value={password} onChange={e=>setPassword(e.target.value)}/>
 
           <MDBRow className='mb-4'>
             <MDBCol className='d-flex justify-content-center'>
@@ -60,7 +85,7 @@ export default function Login() {
             </MDBCol>
           </MDBRow>
 
-          <MDBBtn type='submit' className='mb-4' block>
+          <MDBBtn type='submit' onClick={handleLogin} className='mb-4' block>
             Sign in
           </MDBBtn>
 

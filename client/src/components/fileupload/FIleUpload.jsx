@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios'; // Make sure to install axios if not already installed
 
 const FileUpload = () => {
+  let apiUrl = "http://localhost:5000/api";
   const [selectedFile, setSelectedFile] = useState(null);
 
   const handleFileChange = (event) => {
@@ -12,9 +13,10 @@ const FileUpload = () => {
     try {
       const formData = new FormData();
       formData.append('file', selectedFile);
+      console.log(formData);
 
       // need to replace url
-      const response = await axios.post('', formData, {
+      const response = await axios.post(`${apiUrl}/file-upload`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },

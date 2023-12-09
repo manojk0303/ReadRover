@@ -1,7 +1,8 @@
 import React from 'react';
 import styled from 'styled-components';
 import Icon from "../../images/logo.png";
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+
 const Container = styled.div`
   background-color: BLACK;
   padding: 15px;
@@ -28,7 +29,15 @@ const LogoutButton = styled.button`
   margin-left: 20px;
 `;
 
-const Navbar = ({ onLogout }) => {
+ 
+
+const Navbar = () => {
+  const navigate = useNavigate(); 
+  const onLogout = () => {
+    // Remove the token from localStorage
+    localStorage.removeItem('jwt');
+    navigate("/register");
+  };
   return (
     <Container>
         <Link to="/">

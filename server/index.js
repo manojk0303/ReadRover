@@ -43,6 +43,7 @@ app.post('/api/register', async (req, res) => {
     if (error.code === 11000) {
       res.status(409).json({ error: 'Email already exists' });
     } else {
+      console.error(error);
       res.status(500).json({ error: 'Failed to register user' });
     }
   }
@@ -68,6 +69,19 @@ app.post('/api/login', async (req, res) => {
   }
 });
 
+
+app.post('/api/file-upload', async (req, res) => {
+  try {
+    console.log(req.body);
+    const { file } = req.formData;
+    const fileText = file.data.toString('utf8');
+    console.log(fileText);
+    res.json({ message: 'File uploaded successfully' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Failed to upload file' });
+  }
+});
 
 
 

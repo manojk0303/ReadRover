@@ -1,4 +1,6 @@
-import React from 'react';
+import React,{useState} from 'react';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 import {
   MDBInput,
   MDBCol,
@@ -16,7 +18,7 @@ const Container = styled.div`
   align-items: center;
 `;
 
-const LoginContainer = styled.div`
+const LoginContainer = styled.form`
   width: 400px;
   padding: 20px;
   border: 1px solid #ccc;
@@ -35,8 +37,37 @@ const RegisterHeading = styled.h3`
 `;
 
 export default function Register() {
+  let apiUrl = "http://localhost:5000/api";
+
+  const [fname,setFName] = useState("");
+  const [lname,setLName] = useState("");
+  const [email,setEmail] = useState("");
+  const [password,setPassword] = useState("");
+
+  
+  const navigate = useNavigate(); 
+  const handleRegister = async (event) => {
+    event.preventDefault()
+        try {
+          let name = fname + " " + lname;
+          const response = await axios.post(`${apiUrl}/register`, { name, email, password });
+          console.log(response.data.token)
+          if (response.data.token){
+            localStorage.setItem('jwt', response.data.token);
+            navigate('/');
+        }
+        } catch (error) {
+          if (error.response.status === 409) {
+            alert('Email already exists');
+          } else {
+            console.error('Error during registration:', error);
+            alert('Registration failed');
+          }
+        }
+      };
+
   return (
-    <Container>
+    <Container onSubmit={handleRegister}>
       <LoginContainer>
         <Logo>
           <img
@@ -50,14 +81,14 @@ export default function Register() {
         
         <MDBRow className='mb-4'>
             <MDBCol>
-            <MDBInput id='form3Example1' label='First name' />
+            <MDBInput id='form3Example1' label='First name' value={fname} onChange={(e)=>setFName(e.target.value)} />
             </MDBCol>
             <MDBCol>
-            <MDBInput id='form3Example2' label='Last name' />
+            <MDBInput id='form3Example2' label='Last name' value={lname} onChange={(e)=>setLName(e.target.value)} />
             </MDBCol>
         </MDBRow>
-        <MDBInput className='mb-4' type='email' id='form3Example3' label='Email address' />
-        <MDBInput className='mb-4' type='password' id='form3Example4' label='Password' />
+        <MDBInput className='mb-4' type='email' id='form3Example3' value={email} label='Email address' onChange={(e)=>setEmail(e.target.value)} />
+        <MDBInput className='mb-4' type='password' id='form3Example4' value={password} label='Password' onChange={(e)=>setPassword(e.target.value)}/>
 
         <MDBCheckbox
             wrapperClass='d-flex justify-content-center mb-4'
@@ -66,7 +97,7 @@ export default function Register() {
             defaultChecked
         />
 
-        <MDBBtn type='submit' className='mb-4' block>
+        <MDBBtn  type='submit' onClick={handleRegister} className='mb-4' block>
             Sign up
         </MDBBtn>
 
