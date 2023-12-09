@@ -10,8 +10,11 @@ const app = express();
 const port = 5000;
 const secretKey = process.env.SECRET_KEY; 
 const DBURL = process.env.DBURI;
-
-
+//multer's things
+const multer = require('multer');
+// const upload = multer({ dest: 'uploads/' }); // this for large file (so we need to save in disk inorder to use it)
+const storage = multer.memoryStorage(); 
+const upload = multer({ storage: storage }) //this for small size files
 
 // Middleware
 app.use(express.json({limit: '50mb'}));
@@ -70,18 +73,22 @@ app.post('/api/login', async (req, res) => {
 });
 
 
-app.post('/api/file-upload', async (req, res) => {
+app.post('/api/file-upload', upload.single('file'), (req, res) => {
   try {
-    console.log(req.body);
-    const { file } = req.formData;
-    const fileText = file.data.toString('utf8');
+    if (!req.file) {
+      return res.status(400).json({ error: 'No file uploaded' });
+    }
+
+    const fileText = req.file.buffer.toString('utf8');
     console.log(fileText);
+
     res.json({ message: 'File uploaded successfully' });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Failed to upload file' });
   }
 });
+
 
 
 
