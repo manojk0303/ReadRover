@@ -1,13 +1,52 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import axios from 'axios'; // Make sure to install axios if not already installed
 
 const FileUpload = () => {
   let apiUrl = "http://localhost:5000/api";
   const [selectedFile, setSelectedFile] = useState(null);
+  const[content,setContent]=useState(null);
+   const [voices, setVoices] = useState([]);
+  const [selectedVoice, setSelectedVoice] = useState(null);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [loading,setLoading]=useState(true);
 
   const handleFileChange = (event) => {
     setSelectedFile(event.target.files[0]);
   };
+
+  useEffect(() => {
+  const fetchVoices = async () => {
+    console.log("useEffect.... speech");
+    const speechSynthesisVoices = window.speechSynthesis.getVoices();
+    setVoices(speechSynthesisVoices);
+    setLoading(false);  // Set loading to false once voices are fetched
+  };
+
+  // Fetch available voices when the component mounts
+  if (window.speechSynthesis.onvoiceschanged !== undefined) {
+    window.speechSynthesis.onvoiceschanged = fetchVoices;
+  } else {
+    fetchVoices();
+  }
+}, []);
+
+const speakText = (text) => {
+  console.log("Speak Text....");
+  const speech = new SpeechSynthesisUtterance();
+  speech.text = text;
+  if (selectedVoice) {
+    speech.voice = selectedVoice;
+  }
+
+
+  // Delay the speak call to ensure other asynchronous operations are complete
+  setTimeout(() => {
+    
+      window.speechSynthesis.speak(speech);
+   
+  }, 100);
+};
+
 
   const handleReadClick = async () => {
     try {
@@ -21,15 +60,30 @@ const FileUpload = () => {
           'Content-Type': 'multipart/form-data',
         },
       });
-
       console.log('Backend Response:', response.data);
+      setContent(response.data.content);
+      if(response.data.content){
+        speakText(response.data.content);
+      }
     } catch (error) {
       console.error('Error uploading file:', error);
     }
   };
 
+
+  const handleVoiceChange = (event) => {
+    const selectedVoiceName = event.target.value;
+    const selectedVoice = voices.find((voice) => voice.name === selectedVoiceName);
+    setSelectedVoice(selectedVoice);
+  };
+
+ 
+
+
   return (
-    <div style={{ textAlign: 'center', marginTop: '50px' }}>
+    (!loading)?
+     
+    (<div style={{ textAlign: 'center', marginTop: '50px' }}>
       <input
         type="file"
         accept=".txt"  // Adjust the accepted file types as needed
@@ -41,11 +95,34 @@ const FileUpload = () => {
         {selectedFile ? `Selected File: ${selectedFile.name}` : 'Choose a File'}
       </label>
       <br />
+       <select onChange={handleVoiceChange} style={styles.voiceSelect}>
+        <option value="">Select a Voice</option>
+        {voices.map((voice) => (
+          <option key={voice.name} value={voice.name}>
+            {voice.name}
+          </option>
+        ))}
+      </select>
       <button onClick={handleReadClick} style={styles.readButton}>
-        Read
+       Upload
       </button>
+
+
+      
+      {
+        content && (
+          <div>
+            <h3>File Content:</h3>
+            <p>{content}</p>
+          </div>
+        )
+      }
     </div>
+  ):(
+    <div>Loading...</div>
+  )
   );
+
 };
 
 const styles = {

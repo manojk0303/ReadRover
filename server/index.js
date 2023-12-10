@@ -81,8 +81,9 @@ app.post('/api/file-upload', upload.single('file'), (req, res) => {
 
     const fileText = req.file.buffer.toString('utf8');
     console.log(fileText);
+  
 
-    res.json({ message: 'File uploaded successfully' });
+    res.json({ message: 'File uploaded successfully' ,content: fileText});
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Failed to upload file' });
